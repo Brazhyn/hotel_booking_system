@@ -55,7 +55,7 @@ async def create_hotel(hotel_data: HotelAdd = Body(openapi_examples={
 @router.put("/{hotel_id}")
 async def update_hotel(
     hotel_id: int,
-    hotel_data: HotelAdd, 
+    hotel_data: HotelPatch, 
 ):
     async with async_session_maker() as session:
         await HotelRepository(session).edit(hotel_data, id=hotel_id)
