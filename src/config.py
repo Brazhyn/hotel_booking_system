@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     DB_PORT: int
     DB_USER: str
     DB_PASS: str
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
     
     @property
     def DB_URL(self):
@@ -19,5 +22,5 @@ class Settings(BaseSettings):
         env_file=BASE_DIR / ".env",
     )
     
-    
+     
 settings = Settings()

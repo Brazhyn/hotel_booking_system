@@ -1,6 +1,6 @@
 from sqlalchemy import func, select
 
-from repositories.base import BaseRepository
+from src.repositories.base import BaseRepository
 from src.schemas.hotels import Hotel
 from src.models.hotels import HotelModel
 
