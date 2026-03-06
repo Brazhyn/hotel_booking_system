@@ -47,8 +47,11 @@ class BaseRepository:
             update(self.model)
             .filter_by(**filter_by)
             .values(**data.model_dump(exclude_unset=exclude_unset))
+            .returning(self.model)
         )
-        await self.session.execute(edit_data_stmt)
+        result = await self.session.execute(edit_data_stmt)
+        res = result.scalars().one()
+        return self.schema.model_validate(res)
         
         
     async def delete(self, **filter_by):
