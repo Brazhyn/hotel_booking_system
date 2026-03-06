@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, HTTPException, Response
 
-from src.api.dependencies import UserIdDep
+from src.api.dependencies import UserIdDep, DBDep
 from src.repositories.users import UserRepository
 from src.schemas.users import UserRequestAdd, UserAdd
 from src.database import async_session_maker
@@ -11,6 +11,7 @@ router = APIRouter(prefix="/auth", tags=["Authorization and authentication"])
 
 @router.post("/login")
 async def login_user(
+    db: DBDep,
     response: Response,
     data: UserRequestAdd = Body(openapi_examples={
         "1": {
@@ -21,19 +22,19 @@ async def login_user(
         }    
     }),
 ):
-    async with async_session_maker() as session:
-        user = await UserRepository(session).get_user_with_hashed_password(email=data.email)
-        if not user:
-            raise HTTPException(status_code=401, detail="User with this email isn't registered!")
-        if not AuthService().verify_password(plain_password=data.password, hashed_password=user.hashed_password):
-            raise HTTPException(status_code=401, detail="Password is incorrect")
-        access_token = AuthService().create_access_token({"user_id": user.id})
-        response.set_cookie("access_token", access_token)
-        return {"access_token": access_token}
+    user = await db.users.get_user_with_hashed_password(email=data.email)
+    if not user:
+        raise HTTPException(status_code=401, detail="User with this email isn't registered!")
+    if not AuthService().verify_password(plain_password=data.password, hashed_password=user.hashed_password):
+        raise HTTPException(status_code=401, detail="Password is incorrect")
+    access_token = AuthService().create_access_token({"user_id": user.id})
+    response.set_cookie("access_token", access_token)
+    return {"access_token": access_token}
 
 
 @router.post("/register") 
 async def register_user(
+    db: DBDep,
     data: UserRequestAdd = Body(openapi_examples={
         "1": {"summary": "Bohdan", "value": {
             "email": "alex730@gmail.com",
@@ -50,9 +51,8 @@ async def register_user(
         last_name=data.last_name,
         hashed_password=hashed_password
     )
-    async with async_session_maker() as session:
-        await UserRepository(session).add(new_user_data)
-        await session.commit()
+    await db.users.add(new_user_data)
+    await db.commit()
         
     return {"status": "OK"}
 
@@ -67,10 +67,10 @@ def logout_user(
 
 @router.get("/me")
 async def get_me(
-    user_id: UserIdDep 
+    db: DBDep,
+    user_id: UserIdDep, 
 ):
-    async with async_session_maker() as session:
-        user = await UserRepository(session).get_one_or_none(id=user_id)
-        return user
+    user = await db.users.get_one_or_none(id=user_id)
+    return user
     
     

@@ -1,10 +1,10 @@
-import asyncio
-from fastapi import Body, APIRouter
+from datetime import date
 
-from src.schemas.rooms import Room, RoomAdd, RoomPatch, RoomRequestAdd
-from src.repositories.rooms import RoomRepository
-from src.api.dependencies import PaginationDep
-from src.database import async_session_maker
+from fastapi import Query, APIRouter
+
+from src.schemas.rooms import RoomAdd, RoomPatchRequest, RoomAddRequest, RoomPatch
+from src.api.dependencies import PaginationDep, DBDep
+from src.schemas.facilities import RoomFacilityAdd
 
 
 router = APIRouter(prefix="/hotels", tags=["rooms"])
@@ -12,75 +12,80 @@ router = APIRouter(prefix="/hotels", tags=["rooms"])
 
 @router.get("/{hotel_id}/rooms")
 async def get_rooms(
+    db: DBDep,
     hotel_id: int,
-    pagination: PaginationDep,
+    date_from: date = Query(example="2026-02-26"),
+    date_to: date = Query(example="2026-03-02")
 ):
-    async with async_session_maker() as session:
-        per_page = pagination.per_page or 5
-        return await RoomRepository(session).get_all(
-            hotel_id=hotel_id,
-            limit=per_page,
-            offset=per_page * (pagination.page - 1),
-        )
-        
+    return await db.rooms.get_filtered_by_time(
+        hotel_id=hotel_id,
+        date_from=date_from,
+        date_to=date_to
+    )
+
         
 @router.get("/{hotel_id}/rooms/{room_id}")
 async def get_room(
+    db: DBDep,
     hotel_id: int,
     room_id: int,
 ):
-    async with async_session_maker() as session:
-        return await RoomRepository(session).get_one_or_none(id=room_id, hotel_id=hotel_id)
+    return await db.rooms.get_one_or_none(id=room_id, hotel_id=hotel_id)
     
     
 @router.post("/{hotel_id}/rooms")
 async def create_room(
+    db: DBDep,
     hotel_id: int,
-    data: RoomRequestAdd,
+    data: RoomAddRequest,
 ):
-    async with async_session_maker() as session:
-        room_dict = data.model_dump()
-        room_dict["hotel_id"] = hotel_id
-        room = await RoomRepository(session).add(RoomAdd(**room_dict))
-        await session.commit()
+    _room_data = RoomAdd(hotel_id=hotel_id, **data.model_dump())
+    room = await db.rooms.add(_room_data)
+    
+    room_facilities_data = [RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in data.facilities_ids]
+    await db.room_facilities.add_bulk(room_facilities_data)
+    await db.commit()
+    
     return {"status": "OK", "data": room}
 
 
 @router.put("/{hotel_id}/rooms/{room_id}")
 async def update_room(
+    db: DBDep,
     hotel_id: int,
     room_id: int,
-    data: RoomPatch,
+    data: RoomAddRequest,
 ):
-    async with async_session_maker() as session:
-        await RoomRepository(session).edit(data, id=room_id, hotel_id=hotel_id)
-        await session.commit()
+    _room_data = RoomAdd(hotel_id=hotel_id, **data.model_dump())
+    await db.rooms.edit(_room_data, id=room_id, hotel_id=hotel_id)
+    await db.commit()
     return {"status": "OK"}
 
 
 @router.patch("/{hotel_id}/rooms/{room_id}")
 async def partial_update_room(
+    db: DBDep,
     hotel_id: int,
     room_id: int,
-    data: RoomPatch,
+    data: RoomPatchRequest,
 ):
-    async with async_session_maker() as session:
-        await RoomRepository(session).edit(
-            data,
-            id=room_id,
-            hotel_id=hotel_id,
-            exclude_unset=True,
-        )
-        await session.commit()
+    _room_data = RoomPatch(hotel_id=hotel_id, **data.model_dump(exclude_unset=True))
+    await db.rooms.edit(
+        _room_data,
+        id=room_id,
+        hotel_id=hotel_id,
+        exclude_unset=True,
+    )
+    await db.commit()
     return {"status": "OK"}
 
 
 @router.delete("/{hotel_id}/rooms/{room_id}")
 async def delete_room(
+    db: DBDep,
     hotel_id: int,
     room_id: int,
 ):
-    async with async_session_maker() as session:
-        await RoomRepository(session).delete(id=room_id, hotel_id=hotel_id)
-        await session.commit()
+    await db.rooms.delete(id=room_id, hotel_id=hotel_id)
+    await db.commit()
     return {"status": "OK"}
