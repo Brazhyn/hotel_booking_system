@@ -10,7 +10,7 @@ from src.models.hotels import HotelModel
 from src.models.rooms import RoomModel
 from src.models.users import UserModel
 from src.models.bookings import BookingModel
-from src.models.facilities import FacilitityModel
+from src.models.facilities import FacilityModel
 from src.config import settings
 
 # this is the Alembic Config object, which provides

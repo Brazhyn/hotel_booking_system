@@ -30,7 +30,7 @@ async def get_room(
     hotel_id: int,
     room_id: int,
 ):
-    return await db.rooms.get_one_or_none(id=room_id, hotel_id=hotel_id)
+    return await db.rooms.get_one_or_none_with_rels(id=room_id, hotel_id=hotel_id)
     
     
 @router.post("/{hotel_id}/rooms")
@@ -39,12 +39,16 @@ async def create_room(
     hotel_id: int,
     data: RoomAddRequest,
 ):
-    _room_data = RoomAdd(hotel_id=hotel_id, **data.model_dump(exclude={"facilities_ids"}))
-    room = await db.rooms.add(_room_data)
-    facilities_ids = data.facilities_ids
+    room_data_dict = data.model_dump()
+    room_data = RoomAdd(hotel_id=hotel_id, **room_data_dict)
+    room = await db.rooms.add(room_data)
     
-    room_facilities_data = [RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in facilities_ids]
-    await db.room_facilities.add_bulk(room_facilities_data)
+    if room_data_dict["facilities_ids"]:
+        room_facilities_data = [
+            RoomFacilityAdd(room_id=room.id, facility_id=f_id) 
+            for f_id in room_data_dict["facilities_ids"]
+        ]
+        await db.room_facilities.add_bulk(room_facilities_data)
     await db.commit()
     
     return {"status": "OK", "data": room}
@@ -57,12 +61,14 @@ async def update_room(
     room_id: int,
     data: RoomAddRequest,
 ):
-    _room_data = RoomAdd(hotel_id=hotel_id, **data.model_dump())
-    room = await db.rooms.edit(_room_data, id=room_id, hotel_id=hotel_id)
+    room_data_dict = data.model_dump()
+    room_data = RoomAdd(hotel_id=hotel_id, **data.model_dump())
+    room = await db.rooms.edit(room_data, id=room_id, hotel_id=hotel_id)
     
-    facilities_ids = data.facilities_ids
-    room_facilities_data = [RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in facilities_ids]
-    await db.room_facilities.edit_room_facilities(data=room_facilities_data, room_id=room.id)
+    await db.room_facilities.set_room_facilities(
+        room_id=room.id,
+        facilities_ids=room_data_dict["facilities_ids"]
+    )
     await db.commit()
     
     return {"status": "OK"}
@@ -75,21 +81,18 @@ async def partial_update_room(
     room_id: int,
     data: RoomPatchRequest,
 ):
-    _room_data = RoomPatch(
-        hotel_id=hotel_id, 
-        **data.model_dump(exclude_unset=True, exclude={"facilities_ids"}))
-    
+    room_data_dict = data.model_dump(exclude_unset=True)
+    _room_data = RoomPatch(hotel_id=hotel_id, **room_data_dict)
     room = await db.rooms.edit(
         _room_data,
         id=room_id,
         hotel_id=hotel_id,
         exclude_unset=True,
     )
-    facilities_ids = data.facilities_ids
-    room_facilities_data = [RoomFacilityAdd(room_id=room.id, facility_id=f_id) for f_id in facilities_ids]
-    await db.room_facilities.edit_room_facilities(data=room_facilities_data, room_id=room.id)
-    
+    if "facilities_ids" in room_data_dict:
+        await db.room_facilities.set_room_facilities(room_id=room.id, facilities_ids=data.facilities_ids)
     await db.commit()
+    
     return {"status": "OK"}
 
 
