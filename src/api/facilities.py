@@ -21,4 +21,5 @@ async def create_facility(
 ):
     facility = await db.facilities.add(data)
     await db.commit()
+    
     return {"status": "OK", "data": facility}
