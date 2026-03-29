@@ -51,10 +51,10 @@ async def register_user(
         last_name=data.last_name,
         hashed_password=hashed_password
     )
-    await db.users.add(new_user_data)
+    user = await db.users.add(new_user_data)
     await db.commit()
         
-    return {"status": "OK"}
+    return {"status": "OK", "user": user}
 
 
 @router.post("/logout")

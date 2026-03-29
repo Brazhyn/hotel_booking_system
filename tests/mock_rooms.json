@@ -1,0 +1,30 @@
+[
+    {
+        "hotel_id": 1,
+        "title": "Superior Room with Terrace and Lake View",
+        "description": "A beautifully designed room with stunning lake views.",
+        "price": 24500,
+        "quantity": 5
+    },
+    {
+        "hotel_id": 1,
+        "title": "Deluxe Plus Room",
+        "description": "The finest room the hotel offers.",
+        "price": 22450,
+        "quantity": 10
+    },
+    {
+        "hotel_id": 2,
+        "title": "Double Room",
+        "description": "An exceptionally cozy and scenic stay.",
+        "price": 4570,
+        "quantity": 15
+    },
+    {
+        "hotel_id": 3,
+        "title": "Triple Room",
+        "description": null,
+        "price": 4350,
+        "quantity": 8
+    }
+]
