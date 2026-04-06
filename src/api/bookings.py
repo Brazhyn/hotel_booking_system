@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from src.schemas.bookings import BookingAddRequest, BookingAdd
 from src.api.dependencies import UserIdDep, DBDep
@@ -28,17 +28,24 @@ async def create_booking(
     db: DBDep,
     data: BookingAddRequest,
 ):
-    room = await db.rooms.get_one_or_none(id=data.room_id)
-    booking = await db.bookings.add(BookingAdd(
-        user_id=user_id,
-        price=room.price,
-        **data.model_dump()
-    ))
-    await db.commit()
+    try: 
+        room = await db.rooms.get_one_or_none(id=data.room_id)
+        booking = await db.bookings.add_booking(
+            BookingAdd(
+            user_id=user_id,
+            price=room.price,
+            **data.model_dump()
+            ),
+            hotel_id=room.hotel_id,
+        )
+        await db.commit()
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     
     return {"status": "OK", "data": booking}
 
-
+   
 @router.delete("/{booking_id}")
 async def delete_booking(
     db: DBDep,

@@ -33,4 +33,8 @@ class DBManager():
         await self.session.commit()
         
         
+    async def rollback(self):
+        await self.session.rollback()
+        
+        
     
