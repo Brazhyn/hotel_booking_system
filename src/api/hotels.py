@@ -27,9 +27,9 @@ async def get_hotels(
         limit=per_page,
         offset=per_page * (pagination.page - 1),
         date_from=date_from,
-        date_to=date_to
+        date_to=date_to,
     )
-        
+
 
 @router.get("/{hotel_id}")
 async def get_hotel(
@@ -40,16 +40,26 @@ async def get_hotel(
 
 
 @router.post("")
-async def create_hotel(db: DBDep, hotel_data: HotelAdd = Body(openapi_examples={
-    "1": {"summary": "Underhill", "value": {
-        "title": "Luxury hotel Underhill",
-        "location": "street Martynovicha 4",
-    }},
-    "2": {"summary": "Provance", "value": {
-        "title": "Magnificent hotel Provance",
-        "location": "street Popovicha 12", 
-    }}
-})
+async def create_hotel(
+    db: DBDep,
+    hotel_data: HotelAdd = Body(
+        openapi_examples={
+            "1": {
+                "summary": "Underhill",
+                "value": {
+                    "title": "Luxury hotel Underhill",
+                    "location": "street Martynovicha 4",
+                },
+            },
+            "2": {
+                "summary": "Provance",
+                "value": {
+                    "title": "Magnificent hotel Provance",
+                    "location": "street Popovicha 12",
+                },
+            },
+        }
+    ),
 ):
     hotel = await db.hotels.add(hotel_data)
     await db.commit()
@@ -60,7 +70,7 @@ async def create_hotel(db: DBDep, hotel_data: HotelAdd = Body(openapi_examples={
 async def update_hotel(
     db: DBDep,
     hotel_id: int,
-    hotel_data: HotelPatch, 
+    hotel_data: HotelPatch,
 ):
     await db.hotels.edit(hotel_data, id=hotel_id)
     await db.commit()
@@ -76,7 +86,7 @@ async def partial_update_hotel(
 ):
     await db.hotels.edit(hotel_data, exclude_unset=True, id=hotel_id)
     await db.commit()
-        
+
     return {"status": "OK"}
 
 
@@ -87,5 +97,5 @@ async def delete_hotel(
 ):
     await db.hotels.delete(id=hotel_id)
     await db.commit()
-    
+
     return {"status": "OK"}

@@ -14,38 +14,38 @@ from src.schemas.facilities import Facility, RoomFacility
 class HotelMapper(DataMapper):
     model = HotelModel
     schema = Hotel
-    
+
 
 class RoomMapper(DataMapper):
     model = RoomModel
     schema = Room
-    
-    
+
+
 class UserMapper(DataMapper):
     model = UserModel
     schema = User
-    
-    
+
+
 class BookingMapper(DataMapper):
     model = BookingModel
     schema = Booking
-    
-    
+
+
 class RoomWithRelsMapper(DataMapper):
     model = RoomModel
     schema = RoomWithRels
-    
-    
+
+
 class UserWithHashedPasswordMapper(DataMapper):
     model = UserModel
     schema = UserWithHashedPassword
-    
-    
+
+
 class FacilityMapper(DataMapper):
     model = FacilityModel
     schema = Facility
-    
-    
+
+
 class RoomFacilityMapper(DataMapper):
     model = RoomFacilityModel
     schema = RoomFacility

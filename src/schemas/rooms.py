@@ -9,8 +9,8 @@ class RoomAddRequest(BaseModel):
     price: int
     quantity: int
     facilities_ids: list[int] | None = Field(default_factory=list)
-    
-    
+
+
 class RoomAdd(BaseModel):
     hotel_id: int
     title: str
@@ -20,13 +20,14 @@ class RoomAdd(BaseModel):
 
 
 class Room(RoomAdd):
-    id: int 
-    
+    id: int
+
     model_config = ConfigDict(from_attributes=True)
 
 
 class RoomWithRels(Room):
     facilities: list[Facility]
+
 
 class RoomPatchRequest(BaseModel):
     title: str | None = Field(default=None)
@@ -34,8 +35,8 @@ class RoomPatchRequest(BaseModel):
     price: int | None = Field(default=None)
     quantity: int | None = Field(default=None)
     facilities_ids: list[int] | None = Field(default_factory=list)
-    
-    
+
+
 class RoomPatch(BaseModel):
     hotel_id: int | None = Field(default=None)
     title: str | None = Field(default=None)

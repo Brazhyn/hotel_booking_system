@@ -19,16 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.drop_constraint(op.f("bookings_user_id_fkey"), "bookings", type_="foreignkey")
     op.drop_constraint(op.f("bookings_room_id_fkey"), "bookings", type_="foreignkey")
-    op.create_foreign_key(
-        None, "bookings", "rooms", ["room_id"], ["id"], ondelete="CASCADE"
-    )
-    op.create_foreign_key(
-        None, "bookings", "users", ["user_id"], ["id"], ondelete="CASCADE"
-    )
+    op.create_foreign_key(None, "bookings", "rooms", ["room_id"], ["id"], ondelete="CASCADE")
+    op.create_foreign_key(None, "bookings", "users", ["user_id"], ["id"], ondelete="CASCADE")
     op.drop_constraint(op.f("rooms_hotel_id_fkey"), "rooms", type_="foreignkey")
-    op.create_foreign_key(
-        None, "rooms", "hotels", ["hotel_id"], ["id"], ondelete="CASCADE"
-    )
+    op.create_foreign_key(None, "rooms", "hotels", ["hotel_id"], ["id"], ondelete="CASCADE")
     op.drop_constraint(
         op.f("rooms_facilities_room_id_fkey"), "rooms_facilities", type_="foreignkey"
     )
@@ -68,14 +62,8 @@ def downgrade() -> None:
         ["id"],
     )
     op.drop_constraint(None, "rooms", type_="foreignkey")
-    op.create_foreign_key(
-        op.f("rooms_hotel_id_fkey"), "rooms", "hotels", ["hotel_id"], ["id"]
-    )
+    op.create_foreign_key(op.f("rooms_hotel_id_fkey"), "rooms", "hotels", ["hotel_id"], ["id"])
     op.drop_constraint(None, "bookings", type_="foreignkey")
     op.drop_constraint(None, "bookings", type_="foreignkey")
-    op.create_foreign_key(
-        op.f("bookings_room_id_fkey"), "bookings", "rooms", ["room_id"], ["id"]
-    )
-    op.create_foreign_key(
-        op.f("bookings_user_id_fkey"), "bookings", "users", ["user_id"], ["id"]
-    )
+    op.create_foreign_key(op.f("bookings_room_id_fkey"), "bookings", "rooms", ["room_id"], ["id"])
+    op.create_foreign_key(op.f("bookings_user_id_fkey"), "bookings", "users", ["user_id"], ["id"])

@@ -11,15 +11,14 @@ if typing.TYPE_CHECKING:
 
 class RoomModel(Base):
     __tablename__ = "rooms"
-    
+
     id: Mapped[int] = mapped_column(primary_key=True)
     hotel_id: Mapped[int] = mapped_column(ForeignKey("hotels.id", ondelete="CASCADE"))
     title: Mapped[str]
     description: Mapped[str | None] = mapped_column(nullable=True)
     price: Mapped[int]
     quantity: Mapped[int]
-    
+
     facilities: Mapped[list["FacilityModel"]] = relationship(
-        back_populates="rooms",
-        secondary="rooms_facilities"
+        back_populates="rooms", secondary="rooms_facilities"
     )

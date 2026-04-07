@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 from fastapi import APIRouter, FastAPI
-import uvicorn 
+import uvicorn
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -27,7 +27,7 @@ api_router.include_router(router_facilities)
 api_router.include_router(router_images)
 
 app.include_router(api_router)
-    
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

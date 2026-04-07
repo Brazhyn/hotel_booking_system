@@ -6,7 +6,7 @@ from src.config import settings
 celery_instance = Celery(
     main="tasks",
     broker=settings.REDIS_URL,
-    include=["src.tasks.tasks"] # absolute path to tasks.py
+    include=["src.tasks.tasks"],  # absolute path to tasks.py
 )
 
 celery_instance.conf.beat_schedule = {
