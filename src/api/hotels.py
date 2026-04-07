@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import Body, Query, APIRouter
 from fastapi_cache.decorator import cache
 
-from src.schemas.hotels import Hotel, HotelPatch, HotelAdd
+from src.schemas.hotels import HotelPatch, HotelAdd
 from src.api.dependencies import PaginationDep, DBDep
 
 

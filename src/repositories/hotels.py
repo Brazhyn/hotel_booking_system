@@ -1,5 +1,3 @@
-from datetime import date
-
 from sqlalchemy import func, select
 
 from src.models.rooms import RoomModel

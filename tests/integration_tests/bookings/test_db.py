@@ -2,7 +2,6 @@ from datetime import date
 
 from src.schemas.bookings import BookingAdd
 from src.utils.db_manager import DBManager
-from tests.conftest import db
 
 
 async def test_booking_crud(db: DBManager):

@@ -3,7 +3,7 @@ from datetime import date
 from fastapi import Query, APIRouter
 
 from src.schemas.rooms import RoomAdd, RoomPatchRequest, RoomAddRequest, RoomPatch
-from src.api.dependencies import PaginationDep, DBDep
+from src.api.dependencies import DBDep
 from src.schemas.facilities import RoomFacilityAdd
 
 

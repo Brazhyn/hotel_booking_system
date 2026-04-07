@@ -1,7 +1,6 @@
 from datetime import date
 
-from sqlalchemy import select, insert
-from pydantic import BaseModel
+from sqlalchemy import select
 
 from src.repositories.base import BaseRepository
 from src.models.bookings import BookingModel

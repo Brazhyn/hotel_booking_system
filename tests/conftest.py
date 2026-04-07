@@ -1,3 +1,4 @@
+# ruff: noqa: E402, F403
 import asyncio
 import sys
 if sys.platform.startswith("win"):
