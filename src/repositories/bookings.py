@@ -1,5 +1,6 @@
 from datetime import date
 
+from fastapi import HTTPException
 from sqlalchemy import select
 
 from src.repositories.base import BaseRepository
@@ -7,6 +8,7 @@ from src.models.bookings import BookingModel
 from src.repositories.mappers.mappers import BookingMapper
 from src.repositories.utils import get_rooms_ids_for_booking
 from src.schemas.bookings import BookingAdd
+from src.exceptions import NoAvailableRoomsException
 
 
 class BookingRepository(BaseRepository):
@@ -29,7 +31,7 @@ class BookingRepository(BaseRepository):
         room_ids = res.scalars().all()
 
         if data.room_id not in room_ids:
-            raise Exception("No rooms available for the given dates")
+            raise NoAvailableRoomsException
 
         new_booking = await self.add(data)
         return self.mapper.map_to_domain_entity(new_booking)
