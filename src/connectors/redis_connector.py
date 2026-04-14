@@ -1,3 +1,5 @@
+import logging
+
 import redis.asyncio as redis
 
 
@@ -8,10 +10,10 @@ class RedisManager:
         self.redis: redis.Redis | None = None
 
     async def connect(self):
+        logging.info(f"Starting connection to Redis at {self.host}:{self.port}")
         self.redis = redis.Redis(host=self.host, port=self.port, decode_responses=True)
-
-        # connection check
         await self.redis.ping()
+        logging.info(f"Successfully connected to Redis at {self.host}:{self.port}")
 
     def _redis_is_connected(self):
         if not self.redis:

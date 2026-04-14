@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 
-class UserRequestAdd(BaseModel):
+class UserAddRequest(BaseModel):
     email: EmailStr
     first_name: str | None = Field(None)
     last_name: str | None = Field(None)

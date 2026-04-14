@@ -1,19 +1,21 @@
 import sys
+import logging
 from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent))
 
 from fastapi import APIRouter, FastAPI
 import uvicorn
 
-sys.path.append(str(Path(__file__).parent.parent))
-
+from src.listeners import lifespan
 from src.api.hotels import router as router_hotels
 from src.api.auth import router as router_auth
 from src.api.rooms import router as router_rooms
 from src.api.bookings import router as router_bookings
 from src.api.facilities import router as router_facilities
 from src.api.images import router as router_images
-from src.listeners import lifespan
 
+logging.basicConfig(level=logging.INFO)
 
 app = FastAPI(lifespan=lifespan)
 

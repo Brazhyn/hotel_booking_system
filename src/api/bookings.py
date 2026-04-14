@@ -1,9 +1,14 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
-from src.schemas.rooms import Room
-from src.schemas.bookings import Booking, BookingAddRequest, BookingAdd
+from src.schemas.bookings import BookingAddRequest
 from src.api.dependencies import UserIdDep, DBDep
-from src.exceptions import ObjectNotFoundException, NoAvailableRoomsException
+from src.exceptions import (
+    NoAvailableRoomsException,
+    RoomNotFoundException,
+    NoAvailableRoomsHTTPException,
+    RoomNotFoundHTTPException,
+)
+from src.services.bookings import BookingService
 
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -13,7 +18,7 @@ router = APIRouter(prefix="/bookings", tags=["bookings"])
 async def get_bookings(
     db: DBDep,
 ):
-    return await db.bookings.get_all()
+    return await BookingService(db).get_all_bookings()
 
 
 @router.get("/me")
@@ -21,7 +26,7 @@ async def get_user_bookings(
     db: DBDep,
     user_id: UserIdDep,
 ):
-    return await db.bookings.get_filtered(user_id=user_id)
+    return await BookingService(db).get_user_bookings(user_id)
 
 
 @router.post("")
@@ -31,19 +36,12 @@ async def create_booking(
     data: BookingAddRequest,
 ):
     try:
-        room: Room = await db.rooms.get_one(id=data.room_id)
-    except ObjectNotFoundException:
-        raise HTTPException(status_code=400, detail="Room not found")
-    
-    try:
-        booking = await db.bookings.add_booking(
-            BookingAdd(user_id=user_id, price=room.price, **data.model_dump()),
-            hotel_id=room.hotel_id,
-        )
-    except NoAvailableRoomsException as ex:
-        raise HTTPException(status_code=409, detail=ex.detail)
-    
-    await db.commit()
+        booking = await BookingService(db).add_booking(user_id, data)
+    except RoomNotFoundException:
+        raise RoomNotFoundHTTPException
+    except NoAvailableRoomsException:
+        raise NoAvailableRoomsHTTPException
+
     return {"status": "OK", "data": booking}
 
 
@@ -52,7 +50,5 @@ async def delete_booking(
     db: DBDep,
     booking_id: int,
 ):
-    await db.bookings.delete(id=booking_id)
-    await db.commit()
-
+    await BookingService(db).delete_booking(booking_id)
     return {"status": "OK"}

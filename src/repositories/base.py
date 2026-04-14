@@ -1,3 +1,4 @@
+import logging
 from typing import Sequence
 
 from pydantic import BaseModel
@@ -32,7 +33,7 @@ class BaseRepository:
         if model is None:
             return None
         return self.mapper.map_to_domain_entity(model)
-    
+
     async def get_one(self, **filter_by):
         query = select(self.model).filter_by(**filter_by)
         result = await self.session.execute(query)
@@ -41,7 +42,6 @@ class BaseRepository:
         except NoResultFound:
             raise ObjectNotFoundException
         return self.mapper.map_to_domain_entity(model)
-            
 
     async def add(self, data: BaseModel):
         try:
@@ -50,11 +50,16 @@ class BaseRepository:
             res = result.scalars().one()
             return self.mapper.map_to_domain_entity(res)
         except IntegrityError as ex:
+            logging.exception(
+                f"Error occurred while adding data: {data.model_dump()} - {ex.orig.__cause__}"
+            )
             if isinstance(ex.orig.__cause__, UniqueViolationError):
                 raise ObjectAlreadyExistsException from ex
             else:
+                logging.error(
+                    f"Unexpected error occurred while adding data: {data.model_dump()} - {ex.orig.__cause__}"
+                )
                 raise ex
-            
 
     async def add_bulk(self, data: Sequence[BaseModel]):
         add_data_stmt = (
@@ -72,7 +77,7 @@ class BaseRepository:
         )
         result = await self.session.execute(edit_data_stmt)
         res = result.scalars().one()
-        self.mapper.map_to_domain_entity(res)
+        return self.mapper.map_to_domain_entity(res)
 
     async def delete(self, **filter_by):
         delete_data_stmt = delete(self.model).filter_by(**filter_by)
