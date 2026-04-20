@@ -1,0 +1,38 @@
+services:
+  api:
+    container_name: "booking_back"
+    image: "booking_back:latest"
+    build: 
+      context: .
+    ports:
+      - "7777:8000"
+    networks:
+      - mynetwork
+    env_file:
+      - .env
+
+  celery_worker:
+    container_name: "booking_celery_worker"
+    image: "booking_celery_worker:latest"
+    build: 
+      context: .
+    networks:
+      - mynetwork
+    env_file:
+      - .env
+    command: "celery --app=src.tasks.celery_app:celery_instance worker -l INFO"
+
+  celery_beat:
+    container_name: "booking_celery_beat"
+    image: "booking_celery_beat:latest"
+    build: 
+      context: .
+    networks:
+      - mynetwork
+    env_file:
+      - .env
+    command: "celery --app=src.tasks.celery_app:celery_instance beat -l INFO"
+
+networks:
+  mynetwork:
+    external: true
