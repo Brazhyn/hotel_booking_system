@@ -44,6 +44,7 @@ An asynchronous comprehensive hotel booking application built with FastAPI, prov
    ```
 
 6. Start the services:
+   **Uncomment ports for local development in docker-compose.yml**
    ```
    docker-compose up --build
    ```
