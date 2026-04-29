@@ -11,6 +11,8 @@ from src.exceptions import (
     ObjectNotFoundException,
     UserNotFoundException,
     InvalidPasswordException,
+    EmptyPasswordException,
+    InvalidTokenException
 )
 from src.config import settings
 from src.services.base import BaseService
@@ -21,6 +23,9 @@ class AuthService(BaseService):
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     async def register_user(self, data: UserAddRequest):
+        if not data.password or not data.password.strip():
+            raise EmptyPasswordException
+            
         hashed_password = self.hashed_password(data.password)
         new_user_data = UserAdd(
             email=data.email,
@@ -77,4 +82,4 @@ class AuthService(BaseService):
         try:
             return jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         except jwt.exceptions.InvalidTokenError:
-            raise HTTPException(status_code=401, detail="Invalid token!")
+            raise InvalidTokenException

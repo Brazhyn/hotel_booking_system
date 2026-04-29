@@ -10,6 +10,8 @@ from src.exceptions import (
     UserNotFoundHTTPException,
     InvalidPasswordException,
     InvalidPasswordHTTPException,
+    EmptyPasswordException,
+    ValidationHTTPException
 )
 
 router = APIRouter(prefix="/auth", tags=["Authorization and authentication"])
@@ -57,6 +59,8 @@ async def register_user(
 ):
     try:
         await AuthService(db).register_user(data)
+    except EmptyPasswordException as ex:
+        raise ValidationHTTPException(detail=ex.detail)
     except UserAlreadyExistsException:
         raise UserAlreadyExistsHTTPException
     return {"status": "OK"}
@@ -64,6 +68,7 @@ async def register_user(
 
 @router.post("/logout")
 async def logout_user(
+    user_id: UserIdDep,
     response: Response,
 ):
     await AuthService().logout_user(response)

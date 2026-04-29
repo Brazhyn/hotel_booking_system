@@ -7,6 +7,8 @@ from src.exceptions import (
     HotelNotFoundHTTPException,
     RoomNotFoundHTTPException,
     RoomNotFoundException,
+    FacilityNotFoundException,
+    FacilityNotFoundHTTPException, 
     check_date_to_after_date_from,
 )
 from src.schemas.rooms import RoomPatchRequest, RoomAddRequest
@@ -25,7 +27,10 @@ async def get_rooms(
     date_to: date = Query(examples=["2026-03-02"]),
 ):
     check_date_to_after_date_from(date_from, date_to)
-    return await RoomService(db).get_filtered_by_time(hotel_id, date_from, date_to)
+    try:
+        return await RoomService(db).get_filtered_by_time(hotel_id, date_from, date_to)
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
 
 
 @router.get("/{hotel_id}/rooms/{room_id}")
@@ -48,6 +53,8 @@ async def create_room(
 ):
     try:
         room = await RoomService(db).create_room(hotel_id, data)
+    except FacilityNotFoundException:
+        raise FacilityNotFoundHTTPException
     except HotelNotFoundException:
         raise HotelNotFoundHTTPException
     except RoomNotFoundException:
@@ -69,6 +76,8 @@ async def update_room(
         raise HotelNotFoundHTTPException
     except RoomNotFoundException:
         raise RoomNotFoundHTTPException
+    except FacilityNotFoundException:
+        raise FacilityNotFoundHTTPException
 
     return {"status": "OK"}
 
@@ -86,6 +95,8 @@ async def partial_update_room(
         raise HotelNotFoundHTTPException
     except RoomNotFoundException:
         raise RoomNotFoundHTTPException
+    except FacilityNotFoundException:
+        raise FacilityNotFoundHTTPException
 
     return {"status": "OK"}
 

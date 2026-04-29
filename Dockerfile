@@ -18,6 +18,6 @@ RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 
 USER appuser
 
-COPY . .
+COPY --chown=appuser:appuser . .
 
 CMD alembic upgrade head; python src/main.py

@@ -51,10 +51,10 @@ An asynchronous comprehensive hotel booking application built with FastAPI, prov
 
 7. Create Nginx container:
    ```
-   docker run --name booking_nginx -v ./nginx.conf:/etc/nginx/nginx.conf --rm -p 80:80 --network=mynetwork -d nginx
+   docker run --name booking_nginx -v ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf --rm -p 80:80 --network=mynetwork -d nginx
    ```
 
-8. The API will be available at `http://localhost:7777`
+8. The API will be available at `http://localhost/docs`
 
 
 ### Testing

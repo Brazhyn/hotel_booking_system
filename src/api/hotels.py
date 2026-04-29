@@ -3,8 +3,14 @@ from datetime import date
 from fastapi import Body, Query, APIRouter
 from fastapi_cache.decorator import cache
 
-from src.exceptions import HotelNotFoundHTTPException, ObjectNotFoundException
-from src.schemas.hotels import HotelPatch, HotelAdd
+from src.exceptions import (
+    HotelNotFoundException,
+    HotelNotFoundHTTPException,
+    ObjectNotFoundException,
+    EmptyUpdateDataException,
+    EmptyUpdateDataHTTPException,
+)
+from src.schemas.hotels import HotelPatch, HotelAdd, HotelPut
 from src.api.dependencies import PaginationDep, DBDep
 from src.services.hotels import HotelService
 
@@ -37,7 +43,7 @@ async def get_hotel(
 ):
     try:
         return await HotelService(db).get_hotel(hotel_id=hotel_id)
-    except ObjectNotFoundException:
+    except HotelNotFoundException:
         raise HotelNotFoundHTTPException
 
 
@@ -71,19 +77,27 @@ async def create_hotel(
 async def update_hotel(
     db: DBDep,
     hotel_id: int,
-    hotel_data: HotelPatch,
+    hotel_data: HotelPut,
 ):
-    await HotelService(db).update_hotel(hotel_id=hotel_id, data=hotel_data)
+    try:
+        await HotelService(db).update_hotel(hotel_id=hotel_id, data=hotel_data)
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
     return {"status": "OK"}
 
 
-@router.patch("/{hotel_id}", summary="Часткове оновлення даних готелю")
+@router.patch("/{hotel_id}")
 async def partial_update_hotel(
     db: DBDep,
     hotel_id: int,
     hotel_data: HotelPatch,
 ):
-    await HotelService(db).partial_update_hotel(hotel_id=hotel_id, data=hotel_data)
+    try:
+        await HotelService(db).partial_update_hotel(hotel_id=hotel_id, data=hotel_data)
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
+    except EmptyUpdateDataException:
+        raise EmptyUpdateDataHTTPException
     return {"status": "OK"}
 
 
@@ -92,5 +106,8 @@ async def delete_hotel(
     db: DBDep,
     hotel_id: int,
 ):
-    await HotelService(db).delete_hotel(hotel_id=hotel_id)
+    try:
+        await HotelService(db).delete_hotel(hotel_id=hotel_id)
+    except HotelNotFoundException:
+        raise HotelNotFoundHTTPException
     return {"status": "OK"}

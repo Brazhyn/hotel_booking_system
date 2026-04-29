@@ -6,12 +6,16 @@ from fastapi import HTTPException
 class HotelBookingException(Exception):
     detail = "Unexpected error"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(self.detail, *args, **kwargs)
+    def __init__(self, message=None, *args):
+        super().__init__(message or self.detail, *args)
 
 
 class ObjectNotFoundException(HotelBookingException):
     detail = "Object not found"
+    
+    
+class BookingNotFoundException(ObjectNotFoundException):
+    detail = "Booking not found"
 
 
 class NoAvailableRoomsException(HotelBookingException):
@@ -44,6 +48,22 @@ class InvalidPasswordException(HotelBookingException):
 
 class IncorrectTokenException(HotelBookingException):
     detail = "Token is incorrect"
+    
+    
+class InvalidTokenException(HotelBookingException):
+    detail = "Invalid token"
+    
+    
+class EmptyPasswordException(HotelBookingException):
+    detail = "Password is required"
+    
+    
+class EmptyUpdateDataException(HotelBookingException):
+    detail = "No fields to update"
+    
+    
+class FacilityNotFoundException(ObjectNotFoundException):
+    detail = "Facility not found"
 
 
 def check_date_to_after_date_from(date_from: date, date_to: date) -> None:
@@ -57,10 +77,16 @@ class HotelBookingHTTPException(HTTPException):
     status_code = 500
     detail = "Unexpected error"
 
-    def __init__(self):
-        super().__init__(status_code=self.status_code, detail=self.detail)
+    def __init__(self, detail=None, status_code=None):
+        super().__init__(
+            status_code=status_code or self.status_code,
+            detail=detail or self.detail
+        )
 
-
+class ValidationHTTPException(HotelBookingHTTPException):
+    status_code = 422
+    detail = "Validation error"
+    
 class HotelNotFoundHTTPException(HotelBookingHTTPException):
     status_code = 404
     detail = "Hotel not found"
@@ -94,3 +120,18 @@ class InvalidPasswordHTTPException(HotelBookingHTTPException):
 class NoAccessTokenHTTPException(HotelBookingHTTPException):
     status_code = 401
     detail = "There is no authentication token!"
+
+
+class EmptyUpdateDataHTTPException(HotelBookingHTTPException):
+    status_code = 422
+    detail = "No fields to update"
+    
+    
+class BookingNotFoundHTTPException(HotelBookingHTTPException):
+    status_code = 404
+    detail = "Booking not found"
+    
+    
+class FacilityNotFoundHTTPException(HotelBookingHTTPException):
+    status_code = 404
+    detail = "Facility not found"

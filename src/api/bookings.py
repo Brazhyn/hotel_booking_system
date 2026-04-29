@@ -7,6 +7,8 @@ from src.exceptions import (
     RoomNotFoundException,
     NoAvailableRoomsHTTPException,
     RoomNotFoundHTTPException,
+    BookingNotFoundException,
+    BookingNotFoundHTTPException,
 )
 from src.services.bookings import BookingService
 
@@ -50,5 +52,8 @@ async def delete_booking(
     db: DBDep,
     booking_id: int,
 ):
-    await BookingService(db).delete_booking(booking_id)
+    try:
+        await BookingService(db).delete_booking(booking_id)
+    except BookingNotFoundException:
+        raise BookingNotFoundHTTPException
     return {"status": "OK"}

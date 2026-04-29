@@ -6,7 +6,10 @@ from pydantic import BaseModel
 from src.services.auth import AuthService
 from src.utils.db_manager import DBManager
 from src.database import async_session_maker
-from src.exceptions import IncorrectTokenException, NoAccessTokenHTTPException
+from src.exceptions import (
+    NoAccessTokenHTTPException,
+    InvalidTokenException
+)
 
 
 class PaginationParams(BaseModel):
@@ -20,14 +23,14 @@ PaginationDep = Annotated[PaginationParams, Depends()]
 def get_token(request: Request) -> str:
     token = request.cookies.get("access_token", None)
     if not token:
-        raise IncorrectTokenException
+        raise NoAccessTokenHTTPException
     return token
 
 
 def get_current_user_id(token: str = Depends(get_token)) -> int:
     try:
         data = AuthService().decode_token(token)
-    except IncorrectTokenException:
+    except InvalidTokenException:
         raise NoAccessTokenHTTPException
     user_id = data.get("user_id")
     return user_id

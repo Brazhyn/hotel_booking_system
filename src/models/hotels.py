@@ -1,3 +1,4 @@
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.database import Base
@@ -9,3 +10,4 @@ class HotelModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str]
     location: Mapped[str]
+    

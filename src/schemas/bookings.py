@@ -1,15 +1,17 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import ConfigDict
+
+from src.schemas.base import BaseSchema
 
 
-class BookingAddRequest(BaseModel):
+class BookingAddRequest(BaseSchema):
     date_from: date
     date_to: date
     room_id: int
 
 
-class BookingAdd(BaseModel):
+class BookingAdd(BaseSchema):
     user_id: int
     room_id: int
     date_from: date
@@ -17,7 +19,7 @@ class BookingAdd(BaseModel):
     price: int
 
 
-class Booking(BookingAdd):
+class Booking(BaseSchema):
     id: int
     total_cost: int
     created_at: datetime

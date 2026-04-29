@@ -4,8 +4,10 @@ services:
     image: "booking_back:latest"
     build: 
       context: .
-    # ports: for local development, not needed in production with nginx
+    # ports: 
     #   - "7777:8000"
+    volumes:
+      - images_data:/app/src/static/images
     networks:
       - mynetwork
     env_file:
@@ -36,3 +38,6 @@ services:
 networks:
   mynetwork:
     external: true
+
+volumes:
+  images_data:

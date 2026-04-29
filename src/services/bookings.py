@@ -1,4 +1,8 @@
-from src.exceptions import ObjectNotFoundException, RoomNotFoundException
+from src.exceptions import (
+    ObjectNotFoundException,
+    RoomNotFoundException,
+    BookingNotFoundException,
+)
 from src.schemas.rooms import Room
 from src.services.base import BaseService
 from src.schemas.bookings import BookingAdd, BookingAddRequest
@@ -25,5 +29,13 @@ class BookingService(BaseService):
         return booking
 
     async def delete_booking(self, booking_id: int):
+        await self.get_booking_with_check(booking_id)
+        
         await self.db.bookings.delete(id=booking_id)
         await self.db.commit()
+        
+    async def get_booking_with_check(self, booking_id: int):
+        try:
+            await self.db.bookings.get_one(id=booking_id)
+        except ObjectNotFoundException:
+            raise BookingNotFoundException

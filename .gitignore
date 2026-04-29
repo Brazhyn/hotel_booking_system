@@ -9,3 +9,4 @@ __pycache__/
 helpers/
 .ruff_cache/
 .env-test
+nginx/nginx.prod.conf
