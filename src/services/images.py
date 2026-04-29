@@ -7,7 +7,7 @@ from src.adapters.protocols import UploadFileProtocol
 
 class ImageService(BaseService):
     def upload_image(self, file: UploadFileProtocol):
-        image_path = f"src/static/images/{file.filename}"
+        image_path = f"app/src/static/images/{file.filename}"
         with open(image_path, "wb+") as new_file:
             shutil.copyfileobj(file.file, new_file)
 
