@@ -14,7 +14,9 @@ RUN poetry config virtualenvs.create false
 
 RUN poetry install --no-interaction --no-ansi --no-root
 
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+RUN useradd -m -u 1000 appuser \
+    && mkdir -p /app/src/static/images \
+    && chown -R appuser:appuser /app
 
 USER appuser
 

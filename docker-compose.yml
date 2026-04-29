@@ -6,6 +6,7 @@ services:
       context: .
     # ports: 
     #   - "7777:8000"
+    user: "1000:1000"
     volumes:
       - images_data:/app/src/static/images
     networks:
