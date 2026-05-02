@@ -22,7 +22,7 @@ An asynchronous comprehensive hotel booking application built with FastAPI, prov
 ### Running with Docker
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/Brazhyn/hotel_booking_system.git
    cd hotel_booking
    ```
 
