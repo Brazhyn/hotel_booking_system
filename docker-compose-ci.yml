@@ -1,0 +1,30 @@
+services:
+  api:
+    container_name: "booking_back"
+    image: booking-api-image:latest
+    user: "1000:1000"
+    volumes:
+      - images_data:/app/src/static/images
+    networks:
+      - mynetwork
+      
+  celery_worker:
+    container_name: "booking_celery_worker"
+    image: booking-api-image:latest
+    networks:
+      - mynetwork
+    command: "celery --app=src.tasks.celery_app:celery_instance worker -l INFO"
+
+  celery_beat:
+    container_name: "booking_celery_beat"
+    image: booking-api-image:latest
+    networks:
+      - mynetwork
+    command: "celery --app=src.tasks.celery_app:celery_instance beat -l INFO"
+
+networks:
+  mynetwork:
+    external: true
+
+volumes:
+  images_data:
