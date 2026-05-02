@@ -75,7 +75,7 @@ async def logout_user(
     return {"status": "OK"}
 
 
-@router.get("/me")
+@router.get("/me", summary="👨‍💻 My data")
 async def get_me(
     db: DBDep,
     user_id: UserIdDep,
