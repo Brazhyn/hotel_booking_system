@@ -25,13 +25,19 @@ format-job:
 
 migrations-job:
   stage: migrations
+  before_script:
+    - cp ${ENV} .env
+    - cp ${TEST_ENV} .env-test
   script: 
-    - docker run --rm --network=mynetwork booking-api-image alembic upgrade head
+    - docker run --rm --network=mynetwork --env-file $(pwd)/.env booking-api-image alembic upgrade head
+    - docker run --rm --network=mynetwork --env-file $(pwd)/.env-test booking-api-image alembic upgrade head
 
 test-job:
   stage: test
+  before_script:
+    - cp ${TEST_ENV} .env-test
   script:
-    - docker run --rm --network=mynetwork booking-api-image pytest -s -v
+    - docker run --rm --network=mynetwork --env-file $(pwd)/.env-test booking-api-image pytest -s -v
 
 deploy-job:      
   stage: deploy  
