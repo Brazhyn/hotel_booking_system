@@ -17,7 +17,7 @@ An asynchronous comprehensive hotel booking application built with FastAPI, prov
 
 ### Prerequisites
 - Docker and Docker Compose
-- Python 3.11+ (for local development)
+- Python 3.11+
 
 ### Running with Docker
 1. Clone the repository:
