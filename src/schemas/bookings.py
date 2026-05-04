@@ -19,7 +19,7 @@ class BookingAdd(BaseSchema):
     price: int
 
 
-class Booking(BaseSchema):
+class Booking(BookingAdd):
     id: int
     total_cost: int
     created_at: datetime
