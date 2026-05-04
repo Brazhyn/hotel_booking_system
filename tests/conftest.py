@@ -1,9 +1,4 @@
 # ruff: noqa: E402, F403
-import asyncio
-import sys
-
-if sys.platform.startswith("win"):
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # for windows
 import json
 from typing import AsyncGenerator
 from unittest import mock
