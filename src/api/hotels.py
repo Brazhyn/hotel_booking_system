@@ -6,7 +6,6 @@ from fastapi_cache.decorator import cache
 from src.exceptions import (
     HotelNotFoundException,
     HotelNotFoundHTTPException,
-    ObjectNotFoundException,
     EmptyUpdateDataException,
     EmptyUpdateDataHTTPException,
 )

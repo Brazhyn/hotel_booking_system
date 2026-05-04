@@ -8,7 +8,7 @@ class UserAddRequest(BaseSchema):
     first_name: str | None = Field(None)
     last_name: str | None = Field(None)
     password: str
-    
+
     @field_validator("email")
     @classmethod
     def validate_email(cls, v: str) -> str:
@@ -35,12 +35,12 @@ class UserAddRequest(BaseSchema):
             raise ValueError("TLD is too short")
 
         for part in parts[:-1]:
-            if not re.match(r'^[a-zA-Z0-9-]+$', part):
+            if not re.match(r"^[a-zA-Z0-9-]+$", part):
                 raise ValueError("Invalid email domain part")
             if not any(c.isalpha() for c in part):
                 raise ValueError("Email domain part must contain at least one letter")
 
-        if not re.match(r'^[a-zA-Z0-9.-]+$', domain):
+        if not re.match(r"^[a-zA-Z0-9.-]+$", domain):
             raise ValueError("Invalid characters in email domain")
 
         return v.lower()

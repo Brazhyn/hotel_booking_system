@@ -11,12 +11,12 @@ class RoomAddRequest(BaseSchema):
     price: int = Field(gt=0)
     quantity: int = Field(ge=0)
     facilities_ids: list[int] | None = Field(default_factory=list)
-    
+
     @field_validator("title")
     @classmethod
     def validate_title(cls, v: str) -> str:
         return validate_non_empty(v)
-    
+
 
 class RoomAdd(BaseSchema):
     hotel_id: int
@@ -42,7 +42,7 @@ class RoomPatchRequest(BaseSchema):
     price: int | None = Field(default=None, gt=0)
     quantity: int | None = Field(default=None, ge=0)
     facilities_ids: list[int] | None = Field(default_factory=list)
-    
+
     @field_validator("title")
     @classmethod
     def validate_title(cls, v: str) -> str:

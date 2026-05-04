@@ -11,7 +11,7 @@ from src.exceptions import (
     InvalidPasswordException,
     InvalidPasswordHTTPException,
     EmptyPasswordException,
-    ValidationHTTPException
+    ValidationHTTPException,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authorization and authentication"])

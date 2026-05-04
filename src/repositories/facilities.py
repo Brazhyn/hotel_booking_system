@@ -9,12 +9,12 @@ from src.repositories.mappers.mappers import RoomFacilityMapper
 class FacilityRepository(BaseRepository):
     model = FacilityModel
     mapper = FacilityMapper
-    
+
     async def get_existing_ids(self, ids: list[int]) -> set[int]:
         query = select(self.model.id).filter(self.model.id.in_(ids))
         result = await self.session.execute(query)
         return set(result.scalars().all())
-        
+
 
 class RoomFacilityRepository(BaseRepository):
     model = RoomFacilityModel

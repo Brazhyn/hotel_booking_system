@@ -8,7 +8,7 @@ from src.exceptions import (
     RoomNotFoundHTTPException,
     RoomNotFoundException,
     FacilityNotFoundException,
-    FacilityNotFoundHTTPException, 
+    FacilityNotFoundHTTPException,
     check_date_to_after_date_from,
 )
 from src.schemas.rooms import RoomPatchRequest, RoomAddRequest

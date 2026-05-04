@@ -1,6 +1,5 @@
 from datetime import datetime
 from datetime import timedelta, timezone
-from fastapi import HTTPException
 from passlib.context import CryptContext
 import jwt
 
@@ -12,7 +11,7 @@ from src.exceptions import (
     UserNotFoundException,
     InvalidPasswordException,
     EmptyPasswordException,
-    InvalidTokenException
+    InvalidTokenException,
 )
 from src.config import settings
 from src.services.base import BaseService
@@ -25,7 +24,7 @@ class AuthService(BaseService):
     async def register_user(self, data: UserAddRequest):
         if not data.password or not data.password.strip():
             raise EmptyPasswordException
-            
+
         hashed_password = self.hashed_password(data.password)
         new_user_data = UserAdd(
             email=data.email,

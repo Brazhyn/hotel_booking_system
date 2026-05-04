@@ -12,8 +12,8 @@ class HotelBookingException(Exception):
 
 class ObjectNotFoundException(HotelBookingException):
     detail = "Object not found"
-    
-    
+
+
 class BookingNotFoundException(ObjectNotFoundException):
     detail = "Booking not found"
 
@@ -48,20 +48,20 @@ class InvalidPasswordException(HotelBookingException):
 
 class IncorrectTokenException(HotelBookingException):
     detail = "Token is incorrect"
-    
-    
+
+
 class InvalidTokenException(HotelBookingException):
     detail = "Invalid token"
-    
-    
+
+
 class EmptyPasswordException(HotelBookingException):
     detail = "Password is required"
-    
-    
+
+
 class EmptyUpdateDataException(HotelBookingException):
     detail = "No fields to update"
-    
-    
+
+
 class FacilityNotFoundException(ObjectNotFoundException):
     detail = "Facility not found"
 
@@ -78,15 +78,14 @@ class HotelBookingHTTPException(HTTPException):
     detail = "Unexpected error"
 
     def __init__(self, detail=None, status_code=None):
-        super().__init__(
-            status_code=status_code or self.status_code,
-            detail=detail or self.detail
-        )
+        super().__init__(status_code=status_code or self.status_code, detail=detail or self.detail)
+
 
 class ValidationHTTPException(HotelBookingHTTPException):
     status_code = 422
     detail = "Validation error"
-    
+
+
 class HotelNotFoundHTTPException(HotelBookingHTTPException):
     status_code = 404
     detail = "Hotel not found"
@@ -125,13 +124,13 @@ class NoAccessTokenHTTPException(HotelBookingHTTPException):
 class EmptyUpdateDataHTTPException(HotelBookingHTTPException):
     status_code = 422
     detail = "No fields to update"
-    
-    
+
+
 class BookingNotFoundHTTPException(HotelBookingHTTPException):
     status_code = 404
     detail = "Booking not found"
-    
-    
+
+
 class FacilityNotFoundHTTPException(HotelBookingHTTPException):
     status_code = 404
     detail = "Facility not found"

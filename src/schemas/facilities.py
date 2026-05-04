@@ -6,7 +6,7 @@ from src.schemas.base import BaseSchema
 
 class FacilityAddRequest(BaseSchema):
     title: str
-    
+
     @field_validator("title")
     @classmethod
     def validate_title(cls, v: str) -> str:

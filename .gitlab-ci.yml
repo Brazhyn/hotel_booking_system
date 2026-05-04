@@ -21,7 +21,7 @@ lint-job:
 format-job:
   stage: lint_format
   script:
-    - docker run --rm --network=mynetwork booking-api-image ruff format --check
+    - docker run --rm --network=mynetwork booking-api-image ruff format --check src/ tests/
 
 migrations-job:
   stage: migrations
