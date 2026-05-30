@@ -1,7 +1,3 @@
-workflow:
-  rules:
-    - when: never
-
 stages:          
   - build
   - lint_format
